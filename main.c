@@ -4,6 +4,6 @@ int main(void)
 {
   printf ("hello world\n");
   printf ("This is the second checkin\n");
-  printf ("Ok, and this is a 3rd line - I used commit for the 2nd\n");
+  printf ("4th change - removed a file and added this\n");
   return 0;
 }
