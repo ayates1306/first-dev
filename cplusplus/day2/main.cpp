@@ -12,8 +12,8 @@ int main(void)
      Next is to specify a namespace...
   */
 
-  using std::cout; /* Means use cout from std */
-  using std::endl; /* Means use endl from std */
+  /* Now I want the compiler to look for everything in the std namespace */
+  using namespace std;
 
   cout << "Hello world\n";
   cout << "here is 5 " << 5 << "\n";
