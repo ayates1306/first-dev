@@ -9,13 +9,17 @@ int main(void)
      'std' is a namespace specifier
      << is the output redirection operator
 
-
+     Next is to specify a namespace...
   */
-  std::cout << "Hello world\n";
-  std::cout << "here is 5 " << 5 << "\n";
-  std::cout << std::endl;
-  std::cout << (float)5/8 << std::endl;
-  std::cout << "And a double now " << (double) 7000*7000 << std::endl;
+
+  using std::cout; /* Means use cout from std */
+  using std::endl; /* Means use endl from std */
+
+  cout << "Hello world\n";
+  cout << "here is 5 " << 5 << "\n";
+  cout << endl;
+  cout << (float)5/8 << endl;
+  cout << "And a double now " << (double) 7000*7000 << endl;
   return 0;
 }
 
