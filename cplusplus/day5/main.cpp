@@ -11,25 +11,25 @@ using namespace std;
  */
 
 
-int Double(int a)
+int Square(int a)
 {
   cout << "double an int" << endl;
   return a*a;
 }
 
-long Double(long a)
+long Square(long a)
 {
   cout << "double a long" << endl;
   return a*a;
 }
 
-float Double(float a)
+float Square(float a)
 {
   cout << "double a float" << endl;
   return a*a;
 }
 
-double Double(double a)
+double Square(double a)
 {
   cout << "double a double" << endl;
   return a*a;
@@ -46,17 +46,17 @@ int main(void)
   double d = 16.667, e;
   cout << "In main" << endl;
   
-  j = Double(i);
-  cout << "doubled was " << j << endl;
+  j = Square(i);
+  cout << "squared was " << j << endl;
 
-  m = Double(l);
-  cout << "long doubled was " << m << endl;
+  m = Square(l);
+  cout << "long squared was " << m << endl;
 
-  g = Double(f);
-  cout << "float doubled was " << g << endl;
+  g = Square(f);
+  cout << "float squared was " << g << endl;
   
-  e = Double(d);
-  cout << "double doubled was " << e << endl;
+  e = Square(d);
+  cout << "double squared was " << e << endl;
 
   return 0;
 }
