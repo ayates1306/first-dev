@@ -19,6 +19,18 @@ int fib(int a)
 }
 
 
+int power(int val, int count)
+{
+  cout << "power " << val << " and count = " << count << endl;
+
+  if (count > 1)
+    {
+      return val * power(val, count-1);
+    }
+  else
+    return val;
+}
+
 int Square(int a)
 {
   cout << "double an int" << endl;
@@ -53,6 +65,10 @@ int main(void)
   float f = 3.5, g;
   double d = 16.667, e;
   cout << "In main" << endl;
+
+  cout << power(2,4) << endl;
+  return 0;
+
 
   for (int index=1; index<15; index++)
     {
