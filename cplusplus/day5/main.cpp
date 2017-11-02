@@ -10,6 +10,14 @@ using namespace std;
  *
  */
 
+int fib(int a)
+{
+  if (a<3)
+    return 1;
+
+  return fib(a-1) + fib(a-2);
+}
+
 
 int Square(int a)
 {
@@ -45,6 +53,12 @@ int main(void)
   float f = 3.5, g;
   double d = 16.667, e;
   cout << "In main" << endl;
+
+  for (int index=1; index<15; index++)
+    {
+      cout << fib(index) << endl;
+    }
+  return 0;
   
   j = Square(i);
   cout << "squared was " << j << endl;
