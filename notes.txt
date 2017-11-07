@@ -1,0 +1,5 @@
+
+man man_pages
+lsb_release -a
+
+
