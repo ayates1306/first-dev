@@ -28,22 +28,58 @@
 
 class Cat {
 public:  // member variables and methods which follow are public
+  unsigned int GetAge();
+  void SetAge(unsigned int Age);
+
+  unsigned int GetWeight();
+  void SetWeight(unsigned int Weight);
+
+  void Meow();
+
+private:
   unsigned int itsAge; // its here can differentiate member variables from non member variables 
   unsigned int itsWeight;
-  void meow();
 };
+
+unsigned int Cat::GetAge()
+{
+  return itsAge;
+}
+
+void Cat::SetAge(unsigned int Age)
+{
+  itsAge = Age;
+}
+
+unsigned int Cat::GetWeight()
+{
+  return Cat::itsWeight;
+}
+
+void Cat::SetWeight(unsigned int Weight)
+{
+  itsWeight = Weight;
+}
+
+void Cat::Meow(void)
+{
+  std::cout << "Meow\n";
+}
+
+int main(void)
+{
+  Cat frisky;
+
+  frisky.SetAge(10);
+  frisky.SetWeight(30);
+  frisky.Meow();
+  
+  std::cout << "Frisky is " << frisky.GetAge() << "years old and " << frisky.GetWeight() << "kg" << std::endl;
+  
+  
+  return 0;
+}
 
 // are there any VT class/C++ conventions?
 // read the OrbPlayer code? Or is that now "old"?
-
-int main()
-{
-  Cat frisky;  // this creates an object of type Cat. The variable name is frisky.
-
-  frisky.itsAge = 10;
-  frisky.itsWeight = 30;
-  frisky.meow();
-
- return 0;
-}
 
