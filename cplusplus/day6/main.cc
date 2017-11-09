@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include "cat.hpp"
 
 /* Day 6 notes
    C++ object extend the language, as opposed to C which has no
@@ -39,62 +39,7 @@
 
  */
 
-class Cat {
-public:  // member variables and methods which follow are public
-  Cat(unsigned int initialAge); // a constructor
-  Cat(void);
-  ~Cat(); // destructor
-  unsigned int GetAge() const; // const means that the method won't change any variables in the class
-  void SetAge(unsigned int Age);
 
-  unsigned int GetWeight();
-  void SetWeight(unsigned int Weight);
-
-  void Meow();
-
-private:
-  unsigned int itsAge; // the word 'its' here can differentiate member variables from non member variables 
-  unsigned int itsWeight;
-};
-
-Cat::Cat()
-{
-}
-
-Cat::Cat(unsigned int initialAge)
-{
-  itsAge = initialAge;
-}
-
-Cat::~Cat()
-{
-  std::cout << "Cat destroyed\n";
-}
-
-unsigned int Cat::GetAge() const
-{
-  return itsAge;
-}
-
-void Cat::SetAge(unsigned int Age)
-{
-  itsAge = Age;
-}
-
-unsigned int Cat::GetWeight()
-{
-  return Cat::itsWeight;
-}
-
-void Cat::SetWeight(unsigned int Weight)
-{
-  itsWeight = Weight;
-}
-
-void Cat::Meow(void)
-{
-  std::cout << "Meow\n";
-}
 
 int main(void)
 {
