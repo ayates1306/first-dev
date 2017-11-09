@@ -37,7 +37,7 @@ public:  // member variables and methods which follow are public
   void Meow();
 
 private:
-  unsigned int itsAge; // its here can differentiate member variables from non member variables 
+  unsigned int itsAge; // the word 'its' here can differentiate member variables from non member variables 
   unsigned int itsWeight;
 };
 
