@@ -23,11 +23,27 @@
    The accessor function fetches the variable, potentially using a new object type. ints vs unsigned ints, or a new "age" type?
    We might even calculate the variable on the fly; this is all hidden behind the accessor.
 
+   Constructors
+   This is a special member function in each class
+   There are many types of constructors, with and without args.
+
+   Destructors are declared if you have a constructor.
+   Same name as Class but with tilde in front.
+   Only one sort of destructor, no args, no return value.
+
+   Frees memory etc used by constructor/the class
+
+   If you don't declare a constructor or destructor, the compiler
+   provides one for you.
+
 
  */
 
 class Cat {
 public:  // member variables and methods which follow are public
+  Cat(unsigned int initialAge); // a constructor
+  Cat(void);
+  ~Cat(); // destructor
   unsigned int GetAge();
   void SetAge(unsigned int Age);
 
@@ -40,6 +56,20 @@ private:
   unsigned int itsAge; // the word 'its' here can differentiate member variables from non member variables 
   unsigned int itsWeight;
 };
+
+Cat::Cat()
+{
+}
+
+Cat::Cat(unsigned int initialAge)
+{
+  itsAge = initialAge;
+}
+
+Cat::~Cat()
+{
+  std::cout << "Cat destroyed\n";
+}
 
 unsigned int Cat::GetAge()
 {
@@ -68,14 +98,21 @@ void Cat::Meow(void)
 
 int main(void)
 {
-  Cat frisky;
+  Cat frisky;// with no parentheses, this is actually the default constructor. It is shorthand for Cat frisky()
+  Cat tom();  // I can declare tom like this.
+  int i();
 
   frisky.SetAge(10);
   frisky.SetWeight(30);
   frisky.Meow();
   
   std::cout << "Frisky is " << frisky.GetAge() << "years old and " << frisky.GetWeight() << "kg" << std::endl;
+
+  frisky.SetAge(8);
+  std::cout << "Frisky is " << frisky.GetAge() << "years old and " << frisky.GetWeight() << "kg" << std::endl;
   
+  Cat mike(34);
+  std::cout << "Mike is " << mike.GetAge() << "years old and " << mike.GetWeight() << "kg" << std::endl;
   
   return 0;
 }
