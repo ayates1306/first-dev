@@ -44,7 +44,7 @@ public:  // member variables and methods which follow are public
   Cat(unsigned int initialAge); // a constructor
   Cat(void);
   ~Cat(); // destructor
-  unsigned int GetAge();
+  unsigned int GetAge() const; // const means that the method won't change any variables in the class
   void SetAge(unsigned int Age);
 
   unsigned int GetWeight();
@@ -71,7 +71,7 @@ Cat::~Cat()
   std::cout << "Cat destroyed\n";
 }
 
-unsigned int Cat::GetAge()
+unsigned int Cat::GetAge() const
 {
   return itsAge;
 }
