@@ -58,10 +58,43 @@ int main(void)
   
   Cat mike(34);
   std::cout << "Mike is " << mike.GetAge() << "years old and " << mike.GetWeight() << "kg" << std::endl;
-  
+
   return 0;
 }
 
 // are there any VT class/C++ conventions?
 // read the OrbPlayer code? Or is that now "old"?
+
+/*
+1. dot operator accesses class members
+2. definition
+3. interface
+4. public can be accessed from the class instance directly.
+private can only be accessed from within the class
+5. yes?
+6. yes
+7. yes
+8. yes, no
+9. void Meow(void) const; // no. void Cat::Meow()
+10. constructor; same name as class.
+
+Exercises:
+
+
+
+ */
+
+
+class Employer
+{
+private:
+  int Age;
+  int YearsOfService;
+  int Salary;
+public:
+  Employer(int a, int b, int c) {Age = a; YearsOfService =b; Salary = c;}
+  int GetAge() const { return Age; }
+  int GetYearsOfService() const {return YearsOfService; }
+
+};
 
