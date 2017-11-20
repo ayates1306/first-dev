@@ -1,5 +1,5 @@
 
-class Cat {
+struct Cat {  // struct can be the same as class if the members are declared public and private correctly (struct has public default, class is private default
 public:  // member variables and methods which follow are public
   Cat(unsigned int initialAge) {itsAge = initialAge;} // a constructor
   Cat(void) {};
