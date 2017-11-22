@@ -1,5 +1,15 @@
 #include <iostream>
 
+void DemoFunction1(void)
+{
+  std::cout << "In my demo function\n";
+}
+
+int DemoFunction2(int a, int b)
+{
+  return a+b;
+}
+
 int main(void)
 {
   /* std:: provides some objects. cout is one of those objects */
@@ -20,6 +30,8 @@ int main(void)
   cout << endl;
   cout << (float)5/8 << endl;
   cout << "And a double now " << (double) 7000*7000 << endl;
+  DemoFunction1();
+  cout << "Response from demo2(2,3) is " << DemoFunction2(2,3) << endl;
   return 0;
 }
 
