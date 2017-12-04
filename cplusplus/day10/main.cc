@@ -33,10 +33,10 @@ private:
 };
 
 // constructor implementation which gives defaults
-Rectangle::Rectangle()
+Rectangle::Rectangle():
+  itsWidth(15),
+  itsHeight(2)
 {
-  itsWidth = 15;
-  itsHeight = 2;
 }
 
 // constructor implementation
