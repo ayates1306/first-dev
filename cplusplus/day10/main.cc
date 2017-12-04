@@ -17,16 +17,27 @@ class Rectangle
 {
 public:
   // constructor
+  Rectangle();
   Rectangle(int width, int height);
   ~Rectangle() {}
 
   // overload class function DrawShape
   void DrawShape(int aWidth, int aHeight, bool useObject=false) const;
 
+  int GetWidth() const { return itsWidth; }
+  int GetHeight() const { return itsHeight; }
+
 private:
   int itsWidth;
   int itsHeight;
 };
+
+// constructor implementation which gives defaults
+Rectangle::Rectangle()
+{
+  itsWidth = 15;
+  itsHeight = 2;
+}
 
 // constructor implementation
 Rectangle::Rectangle(int width, int height)
@@ -59,10 +70,17 @@ void Rectangle::DrawShape(int width, int height, bool useObject) const
 int main()
 {
   Rectangle theRect(30,5);
-  std::cout << "DrawShape(5,5, true) :\n";
+  Rectangle theSecondRect; // note omit parentheses
+  // otherwise you get:
+  //  error: request for member ‘DrawShape’ in ‘theSecondRect’, which is of non-class type ‘Rectangle()’ theSecondRect.DrawShape(5, 5, true);
+  //
+  std::cout << "theRect.DrawShape(5,5, true) :\n";
   theRect.DrawShape(5,5, true);
-  std::cout << "DrawShape(5,5) :\n";
-  theRect.DrawShape(5, 5);
+  std::cout << "theSecondRect.DrawShape(5,5, true) :\n";
+  theSecondRect.DrawShape(5, 5, true);
+
+  std::cout << "First rect width:" << theRect.GetWidth() << " and height " << theRect.GetHeight() << "\n";
+  std::cout << "2nd rect width  :" << theSecondRect.GetWidth() << " and height " << theSecondRect.GetHeight() << "\n";
 
   return 0;
 }
