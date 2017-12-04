@@ -21,8 +21,7 @@ public:
   ~Rectangle() {}
 
   // overload class function DrawShape
-  void DrawShape() const;
-  void DrawShape(int aWidth, int qHeight) const;
+  void DrawShape(int aWidth, int aHeight, bool useObject=false) const;
 
 private:
   int itsWidth;
@@ -36,19 +35,17 @@ Rectangle::Rectangle(int width, int height)
   itsHeight = height;
 }
 
-// overloaded DrawShape - takes no parameters
-// and draws a shape based on the current
-// class member values
-void Rectangle::DrawShape() const
-{
-  DrawShape(itsWidth, itsHeight);
-}
 
 // Overloaded drawshape - takes 2 params
 // width and height; draws the shape based
 // on these args
-void Rectangle::DrawShape(int width, int height) const
+void Rectangle::DrawShape(int width, int height, bool useObject) const
 {
+  if (useObject)
+    {
+      height = itsHeight;
+      width = itsWidth;
+    }
   for (int i=0; i<height; i++)
   {
     for (int j=0; j<width; j++)
@@ -62,10 +59,10 @@ void Rectangle::DrawShape(int width, int height) const
 int main()
 {
   Rectangle theRect(30,5);
-  std::cout << "DrawShape() :\n";
-  theRect.DrawShape();
-  std::cout << "DrawShape(20,10) :\n";
-  theRect.DrawShape(20, 10);
+  std::cout << "DrawShape(5,5, true) :\n";
+  theRect.DrawShape(5,5, true);
+  std::cout << "DrawShape(5,5) :\n";
+  theRect.DrawShape(5, 5);
 
   return 0;
 }
