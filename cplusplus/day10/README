@@ -1,0 +1,5 @@
+Note that to compile with debug info, so I can use gdb:
+$g++ -g counter.cc
+Now I can do
+$gdb ./a.out
+

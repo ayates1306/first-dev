@@ -66,6 +66,8 @@ Rectangle::~Rectangle()
 // deep copy constructor
 Rectangle::Rectangle(const Rectangle & orig)
 {
+  std::cout << "Deep copy " << std::endl;
+
   itsWidth = new int;
   itsHeight = new int;
   *itsWidth = orig.GetWidth();
@@ -96,7 +98,8 @@ int main()
 {
   Rectangle theRect(30,5);
   Rectangle theSecondRect; // note omit parentheses
-  Rectangle theThirdRect = theRect;
+  Rectangle theThirdRect(theRect); // same as theThirdRect=theRect;
+
   // otherwise you get:
   //  error: request for member ‘DrawShape’ in ‘theSecondRect’, which is of non-class type ‘Rectangle()’ theSecondRect.DrawShape(5, 5, true);
   //
