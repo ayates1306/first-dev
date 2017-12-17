@@ -7,6 +7,7 @@ using namespace std;
 class Counter {
 public:
   Counter();
+  Counter(int val);
   ~Counter() {};
   int GetItsVal() const {return itsVal;}
   void SetItsVal(int x) {itsVal = x;}
@@ -16,19 +17,25 @@ private:
   int itsVal;
 };
 
+// Constructor with no arg
 Counter::Counter():
   itsVal(0)
 {
-  cout << "New counter" << endl;
+  cout << "New 0 counter" << endl;
 }
 
-// One way of overloading ++ is to return a newly created object
+// New constructor which takes a value
+Counter::Counter(int val):
+  itsVal(val)
+{
+  cout << "New assigned constructor "<<endl;
+}
+
+// I can return a Counter which is created automatically
 Counter Counter::operator++()
 {
-  Counter temp;
   ++itsVal;
-  temp.SetItsVal(itsVal);
-  return temp;
+  return Counter(itsVal);
 }
 
 /*
