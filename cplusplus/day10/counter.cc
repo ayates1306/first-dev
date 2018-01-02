@@ -7,7 +7,7 @@ using namespace std;
 class Counter {
 public:
   Counter();
-  Counter(int val);
+  Counter(int val); // assignment constructor from an int
   ~Counter() {};
   int GetItsVal() const {return itsVal;}
   void SetItsVal(int x) {itsVal = x;}
@@ -17,6 +17,7 @@ public:
   Counter operator++(int); // overloaded postfix++ operator
   Counter operator+(const Counter &); // overload + operator
   Counter & operator=(const Counter&); // overload = operator, aka assignement
+  operator int();
 private:
   int itsVal;
 };
@@ -77,22 +78,24 @@ Counter Counter::operator+(const Counter &rhs)
   return Counter(itsVal + rhs.GetItsVal());
 }
 
+Counter::operator int()
+{
+  return itsVal;
+}
+
 int main()
 {
-  Counter i;
-  cout << "The value of i is " << i.GetItsVal() << endl;
-  i.Increment();
-  cout << "The value of i is " << i.GetItsVal() << endl;
-  ++i; // calls prefix operator
-  Counter b = ++i;
-  cout << "The value of i is " << i.GetItsVal() << endl;
-  cout << "The value of b is " << b.GetItsVal() << endl;
-  cout << "Use postfix++" << endl;
-  Counter c = b++;
-  cout << "The value of b is " << b.GetItsVal() << endl;
-  cout << "The value of c is " << c.GetItsVal() << endl;
-  c = i+b;
-  cout << "c is now " << c.GetItsVal() << endl;
+  // Counter theCounter;
+  short theShort = 45;
+  Counter theCounter(theShort);
+  //theCounter = theShort;
+
+  cout << theCounter.GetItsVal() << endl;
+
+  theShort = theCounter;
+
+  cout << "theShort = " << theShort << endl;
+
   return 0;
 }
 
