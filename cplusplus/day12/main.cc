@@ -28,6 +28,8 @@ public:
   // other methods
   void Speek() const { cout << "Mammal sound\n"; }
   void Sleep() const { cout << "Zzzzz\n"; }
+  void Move() const { cout << "Mammal move 1 step\n";}
+  void Move(int n) const { cout << "Mammal move " << n << " steps\n";}
 
 protected: // because private data is not available to derived classes
   int itsAge;
@@ -54,6 +56,9 @@ public:
 
   // overridden speak method
   void Speak() const {cout << "Woof!\n"; }
+
+  // override the Move method
+  void Move() const {cout << "Dog move 5 steps\n";}
 
 protected:
   BREED itsBreed;
@@ -109,9 +114,16 @@ Dog::~Dog()
 int main(void)
 {
   Dog fido;
+  Mammal dino;
   fido.Speak();
   fido.WagTail();
   cout << "Fido is "<<fido.GetAge() << " years old\n";
+  dino.Move();
+  dino.Move(4);
+  fido.Move();
+  //  fido.Move(6); // cannot do this because Move(int) is hidden when I overrode the method, I did not override all others that were overloaded by the base class
+  // However, I can refer to the base classes directly, like this:
+  fido.Mammal::Move(6);
 }
 
 
