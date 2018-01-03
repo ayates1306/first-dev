@@ -15,8 +15,8 @@ class Mammal
 {
 public:
   // constructors
-  Mammal():itsAge(2), itsWeight(5){}
-  ~Mammal() {}
+  Mammal();
+  ~Mammal();
 
   // accessors
   int GetAge() const {return itsAge;}
@@ -37,8 +37,8 @@ class Dog : public Mammal  // public inheritance
 {
 public:
   // constructors
-  Dog():itsBreed(GOLDEN){}
-  ~Dog(){}
+  Dog();
+  ~Dog();
 
   // Accessors
   BREED GetBreed() const { return itsBreed; }
@@ -52,12 +52,35 @@ protected:
   BREED itsBreed;
 };
 
+Mammal::Mammal():
+  itsAge(1),
+  itsWeight(5)
+{
+  cout << "Mammal constructor\n";
+}
+
+Mammal::~Mammal()
+{
+  cout << "Mammal destructor\n";
+}
+
+Dog::Dog():
+  itsBreed(GOLDEN)
+{
+  cout << "Dog constructor\n";
+}
+
+Dog::~Dog()
+{
+  cout << "Dog desctructor\n";
+}
+
 int main(void)
 {
   Dog fido;
   fido.Speek();
   fido.WagTail();
-  cout << "Fido is "<<fido.GetAge() << "years old\n";
+  cout << "Fido is "<<fido.GetAge() << " years old\n";
 }
 
 
