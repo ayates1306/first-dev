@@ -16,6 +16,7 @@ class Mammal
 public:
   // constructors
   Mammal();
+  Mammal(int);
   ~Mammal();
 
   // accessors
@@ -38,6 +39,9 @@ class Dog : public Mammal  // public inheritance
 public:
   // constructors
   Dog();
+  Dog(int age);
+  Dog(int age, int weight);
+  Dog(int age, int weight, BREED breed);
   ~Dog();
 
   // Accessors
@@ -53,10 +57,17 @@ protected:
 };
 
 Mammal::Mammal():
-  itsAge(1),
+  itsAge(10),
   itsWeight(5)
 {
   cout << "Mammal constructor\n";
+}
+
+Mammal::Mammal(int age):
+  itsAge(age),
+  itsWeight(5)
+{
+  cout << "Mammal (int) constructor\n";
 }
 
 Mammal::~Mammal()
@@ -70,17 +81,48 @@ Dog::Dog():
   cout << "Dog constructor\n";
 }
 
+Dog::Dog(int age):
+  Mammal(age),
+  itsBreed(GOLDEN)
+{
+  cout << "Dog(int) constructor\n";
+}
+
+Dog::Dog(int age, int weight):
+  Mammal(age),
+  itsBreed(GOLDEN)
+{
+  itsWeight = weight;
+  cout << "Dog(int,int) constructor\n";
+}
+
+Dog::Dog(int age, int weight, BREED breed):
+  Mammal(age),
+  itsBreed(breed)
+
+{
+  itsWeight = weight;
+  cout << "Dog (int, int, breed) constructor\n";
+}
+
+
 Dog::~Dog()
 {
-  cout << "Dog desctructor\n";
+  cout << "Dog destructor\n";
 }
 
 int main(void)
 {
   Dog fido;
+  Dog rover(1);
+  Dog fluffy(2,3);
+  Dog rex (5,6,DOBERMAN);
   fido.Speek();
   fido.WagTail();
   cout << "Fido is "<<fido.GetAge() << " years old\n";
+  cout << "Rover is "<<rover.GetAge() << " years old\n";
+  cout << "Fluffy is "<<fluffy.GetAge() << " years old\n";
+  cout << "Rex is "<<rex.GetAge() << " years old\n";
 }
 
 
