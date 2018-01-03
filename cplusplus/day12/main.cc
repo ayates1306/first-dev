@@ -56,6 +56,8 @@ int main(void)
 {
   Dog fido;
   fido.Speek();
+  fido.WagTail();
+  cout << "Fido is "<<fido.GetAge() << "years old\n";
 }
 
 
