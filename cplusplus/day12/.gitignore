@@ -1,0 +1,6 @@
+a.out
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CMakeFiles/*
+day12
