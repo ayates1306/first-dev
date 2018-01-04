@@ -113,10 +113,17 @@ Dog::~Dog()
 
 int main(void)
 {
+  Dog rex;
   Mammal *fido = new Dog;
   Mammal *dino = new Mammal;
-  Dog rex;
   //  fido->WagTail(); // Note that I cannot do this because Mammal doesn't have a WagTail method. I will learn about multiple inheritance later.
+  // WagTail() is not a virtual function and is not present in Mammal.
+  // I would need to create a Dog object or a Dog pointer to access it.
+  // I can do horrible pointer reassignment but that's not correct right now.
+  //   Dog *tmp;
+  //   tmp = (Dog*)dino;
+  //   tmp->WagTail();
+
   cout << "Fido is "<<fido->GetAge() << " years old\n";
   cout << "Dino speak:";
   dino->Speak();
