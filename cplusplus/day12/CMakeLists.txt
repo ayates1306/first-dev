@@ -1,3 +1,5 @@
 cmake_minimum_required (VERSION 2.6)
 project (day12)
+SET(GCC_COVERAGE_COMPILE_FLAGS "-g")
+SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
 add_executable(day12 main.cc)
