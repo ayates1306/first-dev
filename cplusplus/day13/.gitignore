@@ -5,4 +5,5 @@ cmake_install.cmake
 *.*~
 string
 day13
+Makefile
 
