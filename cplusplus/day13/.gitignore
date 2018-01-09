@@ -1,0 +1,8 @@
+CMakeFiles/*
+CMakeLists.txt~
+CMakeCache.txt
+cmake_install.cmake
+*.*~
+string
+day13
+
