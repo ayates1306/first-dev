@@ -13,7 +13,7 @@ public:
   virtual ~Cat() { HowManyCats--;}
   virtual int GetAge() { return itsAge; }
   virtual void SetAge(int age) { itsAge = age;}
-  virtual int GetHowManyCats() { return HowManyCats; } // accessor function
+  static int GetHowManyCats() { return HowManyCats; } // accessor function
 private:
   static int HowManyCats; // variable is now private (and still static)
   int itsAge;
@@ -30,7 +30,7 @@ int main()
 {
   int i;
   //  Cat litter[5];
-  Cat *plitter[5];
+  Cat *plitter[5] = {0,0,0,0,0};
   for (i=0; i<5; i++)
     {
       cout << "Create a cat!\n";
@@ -41,13 +41,17 @@ int main()
   for (i=0; i<5; i++)
     {
       cout << "litter " << i << "\n";
-      cout << "Cat count " << plitter[i]->GetHowManyCats() << "\n";
       delete plitter[i];
-      // Note that now GetHowManyCats() is a member function of the
-      // Cat class, I can only use it from an object. If I delete
-      // the object, as here, then it is no longer valid to call
-      // the function. I get a seg fault if I delete the object
-      // and then call ->GetHowManyCats()
+      cout << "Count " << Cat::GetHowManyCats() << "\n";
+      // Note that now GetHowManyCats() is a static member function 
+      // of the Cat class, I can actually use it without an object.
+      // A brief experiment suggested even casting NULL to a Cat*
+      // allowed me to access NULL->GetHowManyCats() which doesn't
+      // feel right.
+      // This suggests that the compiler knows that the function
+      // is static and therefore at 1 specific memory location, so
+      // ignored the actual address of the pointer to object that I 
+      // gave it.
     }
   return 0;
 }
