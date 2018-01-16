@@ -13,8 +13,9 @@ public:
   virtual ~Cat() { HowManyCats--;}
   virtual int GetAge() { return itsAge; }
   virtual void SetAge(int age) { itsAge = age;}
-  static int HowManyCats;
+  virtual int GetHowManyCats() { return HowManyCats; } // accessor function
 private:
+  static int HowManyCats; // variable is now private (and still static)
   int itsAge;
 };
 
@@ -34,14 +35,19 @@ int main()
     {
       cout << "Create a cat!\n";
       plitter[i] = new Cat(i);;
-      cout << "Cat count " << plitter[i]->HowManyCats << "\n";
+      cout << "Cat count " << plitter[i]->GetHowManyCats() << "\n";
     }
   cout << "lose the cats ...\n";
   for (i=0; i<5; i++)
     {
       cout << "litter " << i << "\n";
+      cout << "Cat count " << plitter[i]->GetHowManyCats() << "\n";
       delete plitter[i];
-      cout << "Cat count " << plitter[i]->HowManyCats << "\n";
+      // Note that now GetHowManyCats() is a member function of the
+      // Cat class, I can only use it from an object. If I delete
+      // the object, as here, then it is no longer valid to call
+      // the function. I get a seg fault if I delete the object
+      // and then call ->GetHowManyCats()
     }
   return 0;
 }
