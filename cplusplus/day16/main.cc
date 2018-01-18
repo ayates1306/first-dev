@@ -67,11 +67,15 @@ Employee & Employee::operator= (const Employee &rhs)
 
 int main()
 {
+  cout << "Creating Edie...\n";
   Employee Edie ("Jane", "Doe", "1234 Shore Parkway", 20000);
   Edie.SetSalary(50000);
-  String LastName("Levine");
-  Edie.SetLastName(LastName);
+  cout << "Calling SetFirstName char*\n";
   Edie.SetFirstName("Edythe");
+  cout << "Creating temporary string\n";
+  String LastName("Levine");
+  cout << "Calling SetLastName String\n";
+  Edie.SetLastName(LastName);
 
   cout << "Name: ";
   cout << Edie.GetFirstName().GetString();
@@ -79,7 +83,7 @@ int main()
   cout << ".\nAddress: ";
   cout << Edie.GetAddress().GetString();
   cout << ".\nSalary: ";
-  cout << Edie.GetSalary();
+  cout << std::dec << Edie.GetSalary();
   cout << "\n";
   return 0;
 }

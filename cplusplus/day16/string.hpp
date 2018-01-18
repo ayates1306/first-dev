@@ -36,7 +36,7 @@ String::String() // basic constructor
   theStr = new char[1];
   theStr[0] = '\0';
   itsLen = 1;
-  //  cout << "Constructor, void, @" << (unsigned long)theStr << "\n";
+    cout << "\tConstructor, void, @" << (unsigned long)theStr << "\n";
   // ConstructorCount++;
 }
 
@@ -51,7 +51,7 @@ String::String(int len)
       theStr[i] = '\0';
     }
   itsLen = len;
-  //  cout << "Constructor(int), theStr @ "<< hex << theStr << "\n";
+    cout << "\tConstructor(int), theStr @ "<< hex << theStr << "\n";
   // ConstructorCount++;
 }
 
@@ -61,11 +61,9 @@ String::String(const char*const str)
   itsLen = strlen(str);
   theStr = new char[itsLen+1];
   for (unsigned int i=0; i<itsLen;i++)
-    {
       theStr[i] = str[i];
-    }
   theStr[itsLen]='\0';
-  //  cout << "Constructor(char*), theStr @ "<< hex << theStr << "\n";
+    cout << "\tConstructor(char*), theStr @ "<< hex << theStr << "\n";
   // ConstructorCount++;
 }
 
@@ -75,23 +73,18 @@ String::String(const String &rhs)
   itsLen = rhs.itsLen;
   theStr = new char[itsLen+1];
   for (unsigned int i=0; i<itsLen;i++)
-    {
       theStr[i] = rhs[i];
-    }
   theStr[itsLen]='\0';
-  //  cout << "Copy Constructor\n";
+  cout << "\tCopy Constructor\n";
   // ConstructorCount++;
 }
 
 // destructor, frees allocated memory
 String::~String()
 {
-  if (theStr != NULL)
-    {
-    delete [] theStr;
-    theStr = NULL;
-    }
-  // cout << "String destructor\n";
+  delete [] theStr;
+  itsLen = 0;
+ cout << "\tString destructor\n";
 }
 
 // assignment operator/operator equals; frees existing memory then 
@@ -100,7 +93,7 @@ String& String::operator=(const String &rhs)
 {
   if (this == &rhs)
     {
-      cout << " this == &rhs\n";
+      cout << " \tthis == &rhs\n";
       return *this;
     }
   // free this
@@ -113,7 +106,7 @@ String& String::operator=(const String &rhs)
       theStr[i] = rhs[i];
   theStr[itsLen] = '\0';
 
-  //  cout << "copied in operator =, new str @ " <<(unsigned long) theStr << "\n";
+  //    cout << "\tcopied in operator =, new str @ " <<(unsigned long) theStr << "\n";
   return *this;
 }
  
