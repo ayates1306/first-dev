@@ -13,7 +13,7 @@ class Cat
 public:
   Cat():itsAge(1) {}
   virtual ~Cat() {}
-  virtual int GetAge() const = 0; // pure virtual
+  virtual void Speak() const = 0;
 protected:
   int itsAge;
 };
@@ -21,16 +21,30 @@ protected:
 class Kitten: public Cat
 {
 public:
-  int GetAge() const { return 5; }
+  void Speak() const { cout << "Meow"; }
+};
+
+class Tiger: public Cat
+{
+public:
+  void Speak() const { cout << "Grrrrr"; }
 };
 
 int main()
 {
-  int (Cat::*pFunc)() const = 0;
+  typedef void (Cat::*CatFunc)()const;
+  CatFunc pFunc[2];
   Cat *ptr=0;
   ptr = new Kitten;
-  pFunc = &Cat::GetAge; // note the &
-  cout << "ptr to age fn = " << (ptr->*pFunc)() << "\n";
+  pFunc[0] = &Cat::Speak; // note the &
+  (ptr->*pFunc[0])();
+  cout << "\n";
+  delete ptr;
+
+  ptr = new Tiger;
+  pFunc[1] = &Cat::Speak; // note the &
+  (ptr->*pFunc[1])();
+  cout << "\n";
   delete ptr;
 
   return 0;
