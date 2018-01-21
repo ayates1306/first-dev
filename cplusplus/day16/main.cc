@@ -1,4 +1,10 @@
 // day16, containment
+// Example program showing passing by value vs passing by reference.
+// Note the number of constructors called.
+// Calling pPrintFunc calls no more constructors (passing by value)
+// whereas PrintFunc calls 3 constructors as part of the copy
+// This is all very similar to C, passing pointers as opposed to
+// passing by value.
 #include "string.hpp"
 
 class Employee
@@ -65,6 +71,9 @@ Employee & Employee::operator= (const Employee &rhs)
   return *this;
 }
 
+void PrintFunc(Employee);
+void rPrintFunc(const Employee&);
+
 int main()
 {
   cout << "Creating Edie...\n";
@@ -77,13 +86,35 @@ int main()
   cout << "Calling SetLastName String\n";
   Edie.SetLastName(LastName);
 
-  cout << "Name: ";
-  cout << Edie.GetFirstName().GetString();
-  cout << " . " << Edie.GetLastName().GetString();
-  cout << ".\nAddress: ";
-  cout << Edie.GetAddress().GetString();
-  cout << ".\nSalary: ";
-  cout << std::dec << Edie.GetSalary();
-  cout << "\n";
+  cout << "Construtor count " << String::ConstructorCount << "\n";
+  rPrintFunc(Edie);
+  cout << "Construtor count " << String::ConstructorCount << "\n";
+  PrintFunc(Edie);
+  cout << "Construtor count " << String::ConstructorCount << "\n";
   return 0;
 }
+
+void PrintFunc(Employee emp)
+{
+  cout << "Name : ";
+  cout << emp.GetFirstName().GetString();
+  cout << "." << emp.GetLastName().GetString();
+  cout << "\nAddress : ";
+  cout << emp.GetAddress().GetString();
+  cout << "\nSalary : ";
+  cout << emp.GetSalary();
+  cout << endl;
+}
+
+void rPrintFunc(const Employee& emp)
+{
+  cout << "Name : ";
+  cout << emp.GetFirstName().GetString();
+  cout << "." << emp.GetLastName().GetString();
+  cout << "\nAddress : ";
+  cout << emp.GetAddress().GetString();
+  cout << "\nSalary : ";
+  cout << emp.GetSalary();
+  cout << endl;
+}
+

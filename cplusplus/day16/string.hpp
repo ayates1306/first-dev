@@ -36,8 +36,8 @@ String::String() // basic constructor
   theStr = new char[1];
   theStr[0] = '\0';
   itsLen = 1;
-    cout << "\tConstructor, void, @" << (unsigned long)theStr << "\n";
-  // ConstructorCount++;
+  //    cout << "\tConstructor, void, @" << (unsigned long)theStr << "\n";
+   ConstructorCount++;
 }
 
 // private helper constructor, used only by
@@ -51,8 +51,8 @@ String::String(int len)
       theStr[i] = '\0';
     }
   itsLen = len;
-    cout << "\tConstructor(int), theStr @ "<< hex << theStr << "\n";
-  // ConstructorCount++;
+  //    cout << "\tConstructor(int), theStr @ "<< hex << theStr << "\n";
+   ConstructorCount++;
 }
 
 // converts a char array into a String
@@ -63,8 +63,8 @@ String::String(const char*const str)
   for (unsigned int i=0; i<itsLen;i++)
       theStr[i] = str[i];
   theStr[itsLen]='\0';
-    cout << "\tConstructor(char*), theStr @ "<< hex << theStr << "\n";
-  // ConstructorCount++;
+  //  cout << "\tConstructor(char*), theStr @ "<< hex << theStr << "\n";
+   ConstructorCount++;
 }
 
 // copy constructor
@@ -75,8 +75,8 @@ String::String(const String &rhs)
   for (unsigned int i=0; i<itsLen;i++)
       theStr[i] = rhs[i];
   theStr[itsLen]='\0';
-  cout << "\tCopy Constructor\n";
-  // ConstructorCount++;
+  //cout << "\tCopy Constructor\n";
+   ConstructorCount++;
 }
 
 // destructor, frees allocated memory
@@ -162,6 +162,6 @@ char& String::operator[](unsigned int pos)
     return theStr[itsLen-1];
 }
 
-// int String::ConstructorCount = 0;
+ int String::ConstructorCount = 0;
 
 
