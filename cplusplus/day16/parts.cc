@@ -251,16 +251,15 @@ void PartsList::Insert(Part*pPart)
     }
 }
 
-class PartsCatalogue
+class PartsCatalogue : private PartsList
 {
 public:
   void Insert(Part*);
   int Exists(int PartNumber);
   Part* Get(int PartNumber);
   void operator+(const PartsCatalogue &);
-  void ShowAll() { thePartsList.Iterate(&Part::Display);}
+  void ShowAll() { Iterate(&Part::Display);}
 private:
-  PartsList thePartsList;
 };
 
 void PartsCatalogue::Insert(Part *newPart)
@@ -268,8 +267,8 @@ void PartsCatalogue::Insert(Part *newPart)
   int partNumber = newPart->GetPartNumber();
   int offset;
 
-  if (!thePartsList.Find(offset, partNumber))
-    thePartsList.Insert(newPart);
+  if (!Find(offset, partNumber))
+    PartsList::Insert(newPart); // note qualification to avoid calling itself
   else
     {
       cout << partNumber << "was already the ";
@@ -287,14 +286,14 @@ void PartsCatalogue::Insert(Part *newPart)
 int PartsCatalogue::Exists(int PartNum)
 {
   int offset;
-  thePartsList.Find(offset, PartNum);
+  Find(offset, PartNum);
   return offset;
 }
 
 Part * PartsCatalogue::Get(int PartNum)
 {
   int offset;
-  Part * thePart = thePartsList.Find(offset, PartNum);
+  Part * thePart = Find(offset, PartNum);
   return thePart;
 }
 
