@@ -79,6 +79,7 @@ AirPlanePart::AirPlanePart(int EngineNumber, int PartNumber):
 class PartNode
 {
 public:
+  friend class PartsList; // friends have access to class members. Note the friend keyword can be put anywhere in this class declaration
   PartNode(Part*);
   ~PartNode();
   void SetNext(PartNode*node)
@@ -159,7 +160,7 @@ PartsList::~PartsList()
 Part * PartsList::GetFirst() const
 {
   if (pHead)
-    return pHead->GetPart();
+    return pHead->itsPart; // no longer need GetPart();
   else
     return NULL;
 }
@@ -172,8 +173,8 @@ Part * PartsList::operator[](int offset) const
   if (offset > itsCount)
     return NULL;
   for (int i=0; i<offset; i++)
-    pNode = pNode->GetNext();
-  return pNode->GetPart();
+    pNode = pNode->itsNext; // no longer need GetNext();
+  return pNode->itsPart; // no longer need GetPart();
 }
 
 Part * PartsList::Find(int &position, int PartNumber) const
@@ -181,9 +182,9 @@ Part * PartsList::Find(int &position, int PartNumber) const
   PartNode *pNode = 0;
   for (pNode = pHead, position = 0; 
        pNode != NULL;
-       pNode = pNode->GetNext(), position++)
+       pNode = pNode->itsNext, position++)
     {
-      if (pNode->GetPart()->GetPartNumber() == PartNumber)
+      if (pNode->itsPart->GetPartNumber() == PartNumber)
 	{
 	  break;
 	}
@@ -191,7 +192,7 @@ Part * PartsList::Find(int &position, int PartNumber) const
   if (pNode == NULL)
     return NULL;
   else
-    return pNode->GetPart();
+    return pNode->itsPart;
 }
 
 void PartsList::Iterate(void (Part::*func)()const) const
@@ -200,8 +201,8 @@ void PartsList::Iterate(void (Part::*func)()const) const
     return;
   PartNode*pNode = pHead;
   do
-    (pNode->GetPart()->*func)();
-  while ((pNode = pNode->GetNext()));
+    (pNode->itsPart->*func)();
+  while ((pNode = pNode->itsNext));
 }
 
 void PartsList::Insert(Part*pPart)
@@ -222,9 +223,9 @@ void PartsList::Insert(Part*pPart)
   
   // if this is smaller than the head, then
   // this becomes the new head
-  if (pHead->GetPart()->GetPartNumber() > New)
+  if (pHead->itsPart->GetPartNumber() > New)
     {
-      pNode->SetNext(pHead);
+      pNode->itsNext = pHead;
       pHead = pNode;
       return;
     }
@@ -232,19 +233,19 @@ void PartsList::Insert(Part*pPart)
   for (;;)
     {
       // if there is no next then this goes afer it
-      if (pCurrent->GetNext() == NULL)
+      if (pCurrent->itsNext == NULL)
 	{
-	  pCurrent->SetNext(pNode);
+	  pCurrent->itsNext = pNode;
 	  return;
 	}
       // if the part goes after this one but before
       // the next one, then insert it here.
-      pNext = pCurrent->GetNext();
-      Next = pNext->GetPart()->GetPartNumber();
+      pNext = pCurrent->itsNext;
+      Next = pNext->itsPart->GetPartNumber();
       if (Next > New)
 	{
-	  pCurrent->SetNext(pNode);
-	  pNode->SetNext(pNext);
+	  pCurrent->itsNext = pNode;
+	  pNode->itsNext = pNext;
 	  return;
 	}
       pCurrent = pNext;
