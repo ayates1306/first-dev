@@ -17,6 +17,7 @@ public:
   char& operator[](unsigned int offset);
   char operator[](unsigned int offset) const;
   String operator+(const String &);
+  friend String operator+(const String &, const String&);
   void operator+=(const String &);
   String& operator=(const String &);
 
@@ -132,6 +133,27 @@ String String::operator+(const String &rhs)
   for (unsigned i=0; i<rhs.itsLen; i++)
     {
       temp[itsLen+i] = rhs[i];
+    }
+  temp[TotalLen]='\0';
+  return temp;
+}
+
+// creates a new string by adding 2 Strings
+// Note that, since this was declared a friend function
+// in the String class, it gets access to the String
+// member variables but it is not part of the String class.
+// Note that the declaration is simply operator+, not String::operator+
+String operator+(const String &lhs, const String &rhs)
+{
+  int TotalLen = lhs.itsLen + rhs.itsLen;
+  String temp(TotalLen+1);
+  for (unsigned i=0; i<lhs.itsLen; i++)
+    {
+      temp[i] = lhs.theStr[i];
+    }
+  for (unsigned i=0; i<rhs.itsLen; i++)
+    {
+      temp[lhs.itsLen+i] = rhs[i];
     }
   temp[TotalLen]='\0';
   return temp;
