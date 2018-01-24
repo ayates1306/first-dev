@@ -14,8 +14,13 @@ int main()
   std::cout << four << std::endl;
   three = one+four;
   std::cout << three.GetString() << std::endl;
+  std::cout << "add char* to String\n";
   three = four + one; // normally cannot use operator + on a const char*
   std::cout << three.GetString() << std::endl;
+
+  std::cout << "Try with << directly...\n";
+  std::cout << one;
+  std::cout << std::endl;
 
   return 0;
 }

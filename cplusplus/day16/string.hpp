@@ -21,6 +21,8 @@ public:
   void operator+=(const String &);
   String& operator=(const String &);
 
+  friend ostream& operator<<(ostream&, String &);
+
   // General accessors
   int GetLen() const {return itsLen;}
   const char*GetString() const {return theStr;}
@@ -64,7 +66,7 @@ String::String(const char*const str)
   for (unsigned int i=0; i<itsLen;i++)
       theStr[i] = str[i];
   theStr[itsLen]='\0';
-  //  cout << "\tConstructor(char*), theStr @ "<< hex << theStr << "\n";
+    cout << "\tConstructor(char*), theStr @ "<< hex << theStr << "\n";
    ConstructorCount++;
 }
 
@@ -184,6 +186,12 @@ char& String::operator[](unsigned int pos)
     return theStr[itsLen-1];
 }
 
- int String::ConstructorCount = 0;
+ostream& operator<< (ostream&theStream, String&theString)
+{
+  theStream << theString.theStr;
+  return theStream;
+}
+
+int String::ConstructorCount = 0;
 
 
