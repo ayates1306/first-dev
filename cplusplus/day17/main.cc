@@ -5,10 +5,28 @@
 // with a number of types, eg, int, short, char* etc
 
 #include <string.h>
+#include <fstream>
 #include <iostream>
 #include <iomanip>  // for ::ios
 #include <locale>
- #include <cstdio>
+#include <cstdio>
+
+void file_test() {
+  // NB iostream flags for file operations:
+  // eof(), bad(), fail(), good()
+  std::ofstream fout("myfile.dat");  // for input would be ifstream
+  fout << "This line is written to myfile." << std::endl;
+  fout.close();
+
+  std::ifstream fin("myfile.dat");
+  char ch;
+  while (fin.get(ch))
+    std::cout << ch;
+  fin.close();
+
+  // note, can do fin.read(char*buf, int len), or fout.write(char*buf, int len)
+
+}
 
 void peek() {
   char ch;
@@ -92,7 +110,7 @@ void cin_tests() {
   cout << "Double :"<< d << endl;
 }
 
-int main() {
+void cout_tests(void) {
   char one[] = "this is a test string";
   std::cout.put('h').put('e').put('l').put('\n');
   std::cout << std::flush;
@@ -153,8 +171,11 @@ const int number = 65;
               << std::setw(12) << -1.23  << '\n'
               << std::setw(12) << 42 << '\n'
               << std::setw(12) << std::put_money(123, true) << "\n\n";
+}
 
-  //  peek();
+int main() {
+  file_test();
+ 
   return 0;
 }
 
