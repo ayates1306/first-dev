@@ -37,9 +37,33 @@ using namespace std;
 
 // start_pattern(function, pattern) sounds more logical.
 
+// Think about the messages on the bus, ie the rules:
+// First we need to configure patterns
+// So let's say:
+//   pattern 1 is WiFi scanning
+//   pattern 2 is WiFi connected
+//   pattern 3 is audio muted
+//   pattern 4 is audio streaming
+// Connectivity will send, eg:
+//   start_pattern(1) or
+//   start_pattern(2)
+// and audio will send, eg:
+//   start_pattern(3) or
+//   start_pattern(4)
+//
+// This means that the pattern needs to know what other patterns
+// to stop first. So each pattern has a group associated with it.
+//
+
 // Config options
-// pattern type, etc etc
+// pattern type, time, etc etc
 // pattern.group = G
+
+// Pros and cons:
+// Pros: IPC command is simple. start_pattern, pattern=N
+// Cons: Need to look up which group N is on
+
+
 
 // commands:
 // On X start_pattern(1)
@@ -53,7 +77,7 @@ using namespace std;
 // priority to drive such LEDs.
 // stop_patterns(group)
 
-class AppFunction;
+class AppFunctionInterface;
 
 // class to keep track of the on/off state and the time between them
 // plus the number of repeats
@@ -62,7 +86,7 @@ class AppFunction;
 class pattern {
 public:
   pattern(int on, int off, int repeat, int delay, std::string cname,
-	  AppFunction *group);
+	  AppFunctionInterface *group);
   ~pattern();
   std::string GetName() const { return name; }
   void start();
@@ -76,25 +100,41 @@ private:
   int afterFlashDelay;
   std::string name; 
   void thread();
+  bool thread_started_;
   pthread_t hand;
-private:
-  class AppFunction *group_;
+  std::thread t_;
+  class AppFunctionInterface *group_;
 };
 
-class AppFunction {
+class AppFunctionInterface {
 public:
-  AppFunction() : current_pattern_(nullptr) {};
-  ~AppFunction();
-  void start_pattern(int);//pattern*);
-  void stop_pattern(int);//pattern*);
-  void set(bool on);
+  //  AppFunction() : current_pattern_(nullptr) {};
+  AppFunctionInterface() : current_pattern_(nullptr) {std::cout << "~AppFnInt\n";}
+  virtual ~AppFunctionInterface(); 
+  void start_pattern(int);
+  void stop_pattern(int);
+  virtual void set(bool on) = 0;
   void AddPattern(pattern*);
 private:
   pattern* current_pattern_;
   std::vector<pattern*> pattern_list_;
 };
 
-void AppFunction::AddPattern(pattern* p)
+class AppFunction : public AppFunctionInterface {
+public:
+  AppFunction():AppFunctionInterface() {};
+  virtual ~AppFunction() {};
+  void set(bool on);
+};
+
+class AppTestFunction : public AppFunctionInterface {
+public:
+  AppTestFunction():AppFunctionInterface() {};
+  virtual ~AppTestFunction() {};
+  void set(bool on);
+};
+
+void AppFunctionInterface::AddPattern(pattern* p)
 {
   std::cout << "Add Pattern 0x" << std::hex << (long long)p;
   std::cout << std::dec << std::endl;
@@ -103,9 +143,9 @@ void AppFunction::AddPattern(pattern* p)
 
 // Stop any currently executing pattern on this Function
 // and start a new one
-void AppFunction::start_pattern(int n) {
+void AppFunctionInterface::start_pattern(int n) {
   if (current_pattern_ != nullptr) {
-    current_pattern_->stop();//pattern::~pattern();
+    current_pattern_->stop();
   }
 
   current_pattern_ = pattern_list_[n];
@@ -116,10 +156,9 @@ void AppFunction::start_pattern(int n) {
   current_pattern_->start();
 }
 
-void AppFunction::stop_pattern(int n) {
+void AppFunctionInterface::stop_pattern(int n) {
   // Free all patterns 
   if (current_pattern_ != nullptr) {
-    //    current_pattern->pattern::~pattern();
       current_pattern_->stop();
   }
 
@@ -127,7 +166,7 @@ void AppFunction::stop_pattern(int n) {
 }
 
 
-AppFunction::~AppFunction() {
+AppFunctionInterface::~AppFunctionInterface() {
   for (std::vector<pattern*>::iterator it = pattern_list_.begin() ; 
        it != pattern_list_.end(); ++it) {
     //        (*it)->pattern::~pattern();
@@ -139,14 +178,25 @@ AppFunction::~AppFunction() {
 }
 
 void AppFunction::set(bool en) {
-  std::cout << "Group set 0x" << std::hex << (long long)this;
+  std::cout << "Functional Group set 0x" << std::hex << (long long)this;
+  std::cout << " => " << en << std::endl << std::dec;
+}
+
+void AppTestFunction::set(bool en) {
+  std::cout << "This is a test interface: Functional Group set 0x" << std::hex << (long long)this;
   std::cout << " => " << en << std::endl << std::dec;
 }
 
 pattern::~pattern()
 {
-  std::cout << "Destroy " << name << "\n";
-  pthread_cancel(hand);
+  std::cout << "~pattern. Destroy " << name << "\n";
+
+  //t_.~thread();  
+  if (thread_started_) {
+    pthread_cancel(hand);
+  //t_.join();
+  }
+  thread_started_ = false;
 }
 
 void pattern::thread()
@@ -154,14 +204,14 @@ void pattern::thread()
   int wait;
   while(1) {
     std::cout << "THREAD: initCount = " << initCount << std::endl;
-   repeatCount = initCount;
+   repeatCount = initCount*2;
   while (repeatCount--)
     {
       cout << "I am '" << name << "' 0x";
       cout << std::hex << (long long)this << std::dec;
       cout << " count " << repeatCount << "\n";
-      //cout << "This thing is " << (onOffState?"on":"off");
-      //cout << " \n";
+      cout << "This thing is " << (onOffState?"on":"off");
+      cout << " \n";
       wait = onOffState?onTime:offTime;
       group_->set(onOffState);
       onOffState = !onOffState;
@@ -179,25 +229,30 @@ void pattern::thread()
 
 
 pattern::pattern(int on, int off, int repeat, int delay, 
-		 std::string cname, class AppFunction* gp):
+		 std::string cname, class AppFunctionInterface* gp):
   onTime(on),
   offTime(off),
   initCount(repeat),
   afterFlashDelay(delay),
   name(cname),
+  thread_started_(false),
   group_(gp)
 {
   std::cout << "Create pattern named " << cname << "\n";
+  std::cout << "With group interface @" << std::hex << (long long)gp;
+  std::cout << std::dec << std::endl;
+  group_->AddPattern(this);
 }
 
 void pattern::start() {
   // start a thread, and remember the thread ID
-  auto t = std::thread(&pattern::thread, this);
+  t_ = std::thread(&pattern::thread, this);
 
-  hand = t.native_handle();
+  hand = t_.native_handle();
   pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-  t.detach(); //join();
+  //    t.detach(); //join();
 
+  thread_started_=true;
   std::cout << "Thread presumably created\n";
 }
 
@@ -206,6 +261,8 @@ void pattern::stop() {
   std::cout << std::dec << std::endl;
   
   pthread_cancel(hand);
+  t_.join();
+  thread_started_=false;
 }
 
 static pattern* plist[5];
@@ -213,21 +270,32 @@ static pattern* plist[5];
 int main () {
   int i, n=0, num=0;
   bool quit=false;
-  AppFunction gp1, gp2;
+  AppTestFunction gp2;
+  AppFunction gp1;
+
+
+  std::cout << "gp1 @" << std::hex << (long long)&gp1;
+  std::cout << std::dec << std::endl;
+  std::cout << "gp2 @" << std::hex << (long long)&gp2;
+  std::cout << std::dec << std::endl;
 
    srand(time(NULL));
 
    for (i=0; i<5; i++)
      {
        std::cout << "Main thread, create new pattern " << i << "\n";
-       std::string name = "blah ";
-       name = name + std::to_string(i);
-       std::cout << "Create it called "<<name << std::endl;
-       plist[i] = new pattern(2500, 2500, i+1, 10000, name, &gp1);
        if ((i&1) == 0){
-	 gp1.AddPattern(plist[i]);
+	 std::string name = "WiFi pattern ";
+	 name = name + std::to_string(i);
+	 std::cout << "Create it called "<<name << std::endl;
+       	 std::cout << "Add to gp1\n";
+	 plist[i] = new pattern(2500, 2500, i+1, 10000, name, &gp1);
        } else {
-	 gp2.AddPattern(plist[i]);
+	 std::string name = "Audio Pattern ";
+	 name = name + std::to_string(i);
+	 std::cout << "Create it called "<<name << std::endl;
+	 std::cout << "Add to gp2\n";
+	 plist[i] = new pattern(2500, 2500, i+1, 10000, name, &gp2);
        }
      }
 
@@ -246,33 +314,41 @@ int main () {
    }
    case 1: {
           if ((n&1) == 0){
-     gp1.start_pattern(n/2);
+	    std::cout << "gp1 start\n";
+	    gp1.start_pattern(n/2);
             } else {
-     gp2.start_pattern(n/2);
+	    std::cout << "gp2 start\n";
+	    gp2.start_pattern(n/2);
             }
-     ++n;
-     ++num;
-     if (n==5) {
-       quit = true;
-     }
+	  ++n;
+	  ++num;
+	  if (n==5) {
+	    quit = true;
+	  }
    }
      break;
    case 2: {
      --n;
      std::cout << "Going to stop " << plist[n]->GetName() << std::endl;
           if ((n&1) == 0){
-     gp1.stop_pattern(n/2);
-            } else {
-     gp2.stop_pattern(n/2);
-            }
+	    gp1.stop_pattern(n/2);
+	  } else {
+	    gp2.stop_pattern(n/2);
+	  }
 	  //     gp1.stop_pattern(n);
 	  //     plist[n] = nullptr;
    }
      break;
    default: {
    }
-   break;
+     break;
    }
+   }
+
+   for (i=0; i<5; i++) {
+     delete plist[i];
+     plist[i] = nullptr;
+     //     plist[i]->join();
    }
     
    //   pthread_exit(NULL);
