@@ -16,7 +16,7 @@ using namespace std;
 
 // Group
 // pattern has a group
-// start_pattern, first ask group to kill other patterns on it?
+// StartPattern, first ask group to kill other patterns on it?
 // What about priorities on LEDs?
 //
 // Patterns represent some state
@@ -26,16 +26,16 @@ using namespace std;
 // running pattern on that group.
 // Does that mean that the APIs are:
 // add_pattern_to_group()  -- no need
-// start_pattern(group, pattern)
+// StartPattern(group, pattern)
 // As only 1 pattern can exist at one time on a group,
 // we just maintain the current pattern inside the group and
-// stop it next time start_pattern() is called.
+// stop it next time StartPattern() is called.
 
 // So really, "group" should be named "function", ie, functional
 // block for the app. A pattern is a representation of the state
 // of the functional block.
 
-// start_pattern(function, pattern) sounds more logical.
+// StartPattern(function, pattern) sounds more logical.
 
 // Think about the messages on the bus, ie the rules:
 // First we need to configure patterns
@@ -45,11 +45,11 @@ using namespace std;
 //   pattern 3 is audio muted
 //   pattern 4 is audio streaming
 // Connectivity will send, eg:
-//   start_pattern(1) or
-//   start_pattern(2)
+//   StartPattern(1) or
+//   StartPattern(2)
 // and audio will send, eg:
-//   start_pattern(3) or
-//   start_pattern(4)
+//   StartPattern(3) or
+//   StartPattern(4)
 //
 // This means that the pattern needs to know what other patterns
 // to stop first. So each pattern has a group associated with it.
@@ -60,22 +60,20 @@ using namespace std;
 // pattern.group = G
 
 // Pros and cons:
-// Pros: IPC command is simple. start_pattern, pattern=N
+// Pros: IPC command is simple. StartPattern, pattern=N
 // Cons: Need to look up which group N is on
 
 
 
 // commands:
-// On X start_pattern(1)
-// On Y start_pattern(2)
+// On X StartPattern(1)
+// On Y StartPattern(2)
 // Handler looks up Group for pattern N
-// then calls group[N].start_pattern()
+// then calls group[N].StartPattern()
 
-// Next things to do:
 // Stop pattern - IRL this would release any resources owned
 // by the pattern (group), thus allowing other groups at a lower
 // priority to drive such LEDs.
-// stop_patterns(group)
 
 class AppFunctionInterface;
 
@@ -89,8 +87,9 @@ public:
 	  AppFunctionInterface *group);
   ~pattern();
   std::string GetName() const { return name; }
-  void start();
-  void stop();
+  void Start();
+  void Stop();
+  void StopGroup();
 private:
   int onTime;
   int offTime;
@@ -109,10 +108,10 @@ private:
 class AppFunctionInterface {
 public:
   //  AppFunction() : current_pattern_(nullptr) {};
-  AppFunctionInterface() : current_pattern_(nullptr) {std::cout << "~AppFnInt\n";}
+  AppFunctionInterface() : current_pattern_(nullptr) {std::cout << "AppFnInt\n";}
   virtual ~AppFunctionInterface(); 
-  void start_pattern(int);
-  void stop_pattern(int);
+  void StartPattern(int);
+  void StopPattern();
   virtual void set(bool on) = 0;
   void AddPattern(pattern*);
 private:
@@ -136,16 +135,14 @@ public:
 
 void AppFunctionInterface::AddPattern(pattern* p)
 {
-  std::cout << "Add Pattern 0x" << std::hex << (long long)p;
-  std::cout << std::dec << std::endl;
   pattern_list_.push_back(p);
 }
 
 // Stop any currently executing pattern on this Function
 // and start a new one
-void AppFunctionInterface::start_pattern(int n) {
+void AppFunctionInterface::StartPattern(int n) {
   if (current_pattern_ != nullptr) {
-    current_pattern_->stop();
+    current_pattern_->Stop();
   }
 
   current_pattern_ = pattern_list_[n];
@@ -153,13 +150,13 @@ void AppFunctionInterface::start_pattern(int n) {
   std::cout << "Start current pattern\n";
   std::cout << "Add Pattern 0x" << std::hex << (long long)current_pattern_;
   std::cout << std::dec << std::endl;
-  current_pattern_->start();
+  current_pattern_->Start();
 }
 
-void AppFunctionInterface::stop_pattern(int n) {
+void AppFunctionInterface::StopPattern() {
   // Free all patterns 
   if (current_pattern_ != nullptr) {
-      current_pattern_->stop();
+      current_pattern_->Stop();
   }
 
   current_pattern_ = nullptr;
@@ -238,13 +235,11 @@ pattern::pattern(int on, int off, int repeat, int delay,
   thread_started_(false),
   group_(gp)
 {
-  std::cout << "Create pattern named " << cname << "\n";
-  std::cout << "With group interface @" << std::hex << (long long)gp;
   std::cout << std::dec << std::endl;
   group_->AddPattern(this);
 }
 
-void pattern::start() {
+void pattern::Start() {
   // start a thread, and remember the thread ID
   t_ = std::thread(&pattern::thread, this);
 
@@ -253,10 +248,13 @@ void pattern::start() {
   //    t.detach(); //join();
 
   thread_started_=true;
-  std::cout << "Thread presumably created\n";
 }
 
-void pattern::stop() {
+void pattern::StopGroup() {
+  group_->StopPattern();
+}
+
+void pattern::Stop() {
   std::cout << "Stop Pattern 0x" << std::hex << (long long)this;
   std::cout << std::dec << std::endl;
   
@@ -273,28 +271,19 @@ int main () {
   AppTestFunction gp2;
   AppFunction gp1;
 
-
-  std::cout << "gp1 @" << std::hex << (long long)&gp1;
-  std::cout << std::dec << std::endl;
-  std::cout << "gp2 @" << std::hex << (long long)&gp2;
-  std::cout << std::dec << std::endl;
-
    srand(time(NULL));
 
    for (i=0; i<5; i++)
      {
-       std::cout << "Main thread, create new pattern " << i << "\n";
        if ((i&1) == 0){
 	 std::string name = "WiFi pattern ";
 	 name = name + std::to_string(i);
 	 std::cout << "Create it called "<<name << std::endl;
-       	 std::cout << "Add to gp1\n";
 	 plist[i] = new pattern(2500, 2500, i+1, 10000, name, &gp1);
        } else {
 	 std::string name = "Audio Pattern ";
 	 name = name + std::to_string(i);
 	 std::cout << "Create it called "<<name << std::endl;
-	 std::cout << "Add to gp2\n";
 	 plist[i] = new pattern(2500, 2500, i+1, 10000, name, &gp2);
        }
      }
@@ -304,6 +293,7 @@ int main () {
    cout << "0: quit"<< std::endl;
    cout << "1: Start pattern"<< std::endl;
    cout << "2: Stop pattern"<< std::endl;
+   cout << "3: Stop GROUP pattern"<< std::endl;
 
    std::cin >> i;
 
@@ -312,13 +302,18 @@ int main () {
      quit = true;
    break;
    }
+     // This would be the StartPattern(p) message.
+     // P was previously configured
    case 1: {
+     std::cout << "Simulated command:\n";
+     std::cout << "pattern_start(n) where N is in the "
+       "global list of patterns\n";
           if ((n&1) == 0){
 	    std::cout << "gp1 start\n";
-	    gp1.start_pattern(n/2);
+	    gp1.StartPattern(n/2);
             } else {
 	    std::cout << "gp2 start\n";
-	    gp2.start_pattern(n/2);
+	    gp2.StartPattern(n/2);
             }
 	  ++n;
 	  ++num;
@@ -331,12 +326,16 @@ int main () {
      --n;
      std::cout << "Going to stop " << plist[n]->GetName() << std::endl;
           if ((n&1) == 0){
-	    gp1.stop_pattern(n/2);
+	    gp1.StopPattern();
 	  } else {
-	    gp2.stop_pattern(n/2);
+	    gp2.StopPattern();
 	  }
-	  //     gp1.stop_pattern(n);
-	  //     plist[n] = nullptr;
+   }
+     break;
+   case 3: {
+     --n;
+     std::cout << "PATTERN Going to stop " << plist[n]->GetName() << std::endl;
+     plist[n]->StopGroup();
    }
      break;
    default: {
