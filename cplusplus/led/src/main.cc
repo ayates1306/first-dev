@@ -91,6 +91,13 @@ public:
   void Stop();
   void StopGroup();
 private:
+// class to keep track of the on/off state and the time between them
+// plus the number of repeats
+class pattern {
+public:
+  pattern(int on, int off, int repeat, int delay, std::string cname);
+  ~pattern();
+  //private:
   int onTime;
   int offTime;
   bool onOffState;
@@ -194,7 +201,12 @@ pattern::~pattern()
   //t_.join();
   }
   thread_started_ = false;
-}
+  //  pthread_t thread_;
+  void thread();
+  std::string GetName() const { return name; }
+  pthread_t hand;
+};
+
 
 void pattern::thread()
 {
@@ -227,10 +239,6 @@ void pattern::thread()
 
 pattern::pattern(int on, int off, int repeat, int delay, 
 		 std::string cname, class AppFunctionInterface* gp):
-  onTime(on),
-  offTime(off),
-  initCount(repeat),
-  afterFlashDelay(delay),
   name(cname),
   thread_started_(false),
   group_(gp)
@@ -264,6 +272,22 @@ void pattern::Stop() {
 }
 
 static pattern* plist[5];
+  name(cname)
+{
+  std::cout << "Create pattern named " << cname << "\n";
+  // start a thread, and remember the thread ID
+  auto t = std::thread(&pattern::thread, this);
+
+  hand = t.native_handle();
+
+  t.detach(); //join();
+
+  std::cout << "Thread presumably created\n";
+  //  while(1);
+}
+
+
+
 
 int main () {
   int i, n=0, num=0;
